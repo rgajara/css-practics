@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="CSS Quest: aprende CSS desde cero resolviendo 200 niveles en el navegador.">
+<meta name="theme-color" content="#1E1B3A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CSS Quest">
+<meta name="format-detection" content="telephone=no">
+<title>CSS Quest · aprende CSS jugando</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/icon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>
+  /* Registra los scripts que no se pudieron cargar (por ejemplo, si falta la carpeta js en GitHub) */
+  window.__cqMissing = [];
+  document.addEventListener('error', function (e) {
+    var t = e.target;
+    if (t && t.tagName === 'SCRIPT') window.__cqMissing.push(t.getAttribute('src'));
+  }, true);
+</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#editor-ta">Saltar al editor</a>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="28" height="28" rx="8" fill="#FFD447"/><path d="M12 9c-3 0-3 2-3 4s-2 3-2 3 2 1 2 3 0 4 3 4M20 9c3 0 3 2 3 4s2 3 2 3-2 1-2 3 0 4-3 4" fill="none" stroke="#1E1B3A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="brand-name">CSS Quest</span>
+  </div>
+  <div class="progress" id="progress" role="progressbar" aria-label="Progreso total" aria-valuemin="0" aria-valuemax="200" aria-valuenow="0">
+    <div class="ribbon" id="ribbon"></div>
+    <span class="progress-text"><b id="done-count">0</b>/200 <span id="save-state" class="save-state" title="El progreso se guarda en este dispositivo">guardado</span></span>
+  </div>
+  <button class="icon-btn" id="btn-map" type="button" aria-label="Mapa de niveles">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5 9 4l6 2.5L20 4v13.5L15 20l-6-2.5L4 20z M9 4v13.5 M15 6.5V20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="icon-btn" id="btn-menu" type="button" aria-label="Opciones">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.9"/><circle cx="12" cy="12" r="1.9"/><circle cx="19" cy="12" r="1.9"/></svg>
+  </button>
+</header>
+
+<main class="layout">
+  <section class="stage-col" aria-label="Escenario">
+    <div class="stage" id="stage">
+      <div class="stage-bar">
+        <div class="seg" role="tablist" aria-label="Vista del escenario">
+          <button type="button" role="tab" id="tab-mine" aria-selected="true">Tu escena</button>
+          <button type="button" role="tab" id="tab-goal" aria-selected="false">Objetivo</button>
+        </div>
+        <div class="stage-tools">
+          <button type="button" class="chip-btn" id="btn-sim" hidden aria-pressed="false">Simular :hover</button>
+          <button type="button" class="chip-btn" id="btn-pip" aria-pressed="true" title="Mostrar u ocultar la miniatura">Miniatura</button>
+          <button type="button" class="chip-btn" id="btn-collapse" aria-expanded="true">Contraer</button>
+        </div>
+      </div>
+      <div class="frames" id="frames">
+        <div class="frame-box is-main" id="box-mine">
+          <div class="scaler"><iframe id="play" title="Tu escena" sandbox="allow-same-origin" tabindex="-1"></iframe><div class="ghosts" id="ghosts" aria-hidden="true"></div></div>
+          <span class="frame-tag">Tu escena</span>
+          <button class="pip-hit" type="button" aria-label="Ver tu escena en grande"></button>
+        </div>
+        <div class="frame-box is-pip" id="box-goal">
+          <div class="scaler"><iframe id="goalview" title="Objetivo" sandbox="allow-same-origin" tabindex="-1"></iframe></div>
+          <span class="frame-tag">Objetivo</span>
+          <button class="pip-hit" type="button" aria-label="Ver el objetivo en grande"></button>
+        </div>
+      </div>
+      <div class="width-ctl" id="width-ctl" hidden>
+        <label for="width-range">Ancho de la ventana del escenario: <output id="width-out">360</output>px</label>
+        <input type="range" id="width-range" min="220" max="720" step="10" value="360">
+      </div>
+    </div>
+  </section>
+
+  <section class="work-col">
+    <nav class="level-nav" aria-label="Niveles">
+      <button class="nav-btn" id="btn-prev" type="button" aria-label="Nivel anterior"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="level-pick" id="btn-level" type="button" aria-label="Abrir el mapa de niveles">
+        <span class="lvl-num" id="lvl-num">Nivel 1</span>
+        <span class="lvl-title" id="lvl-title">…</span>
+      </button>
+      <button class="nav-btn" id="btn-next-top" type="button" aria-label="Siguiente nivel" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </nav>
+    <p class="world-line" id="world-line"></p>
+
+    <div class="brief" id="brief"></div>
+
+    <details class="commands" id="commands" open>
+      <summary>Comandos de este nivel <span class="sub">toca uno para escribirlo</span></summary>
+      <ul id="cmd-list" class="cmd-list"></ul>
+    </details>
+
+    <div class="editor" id="editor">
+      <div class="editor-head">
+        <span>style.css</span>
+        <span class="editor-hint">Ctrl/⌘ + Enter comprueba</span>
+      </div>
+      <div class="editor-body">
+        <div class="gutter" aria-hidden="true"></div>
+        <div class="code-wrap">
+          <pre class="hl" aria-hidden="true"><code></code></pre>
+          <textarea id="editor-ta" aria-label="Editor de CSS" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off" enterkeyhint="enter"></textarea>
+        </div>
+      </div>
+      <p class="lint" id="lint" aria-live="polite"></p>
+    </div>
+
+    <div class="actions">
+      <button class="btn primary" id="btn-check" type="button">Comprobar</button>
+      <button class="btn ghost small" id="btn-reset" type="button">Reiniciar código</button>
+    </div>
+
+    <section class="feedback" id="feedback" aria-live="polite" hidden></section>
+
+    <section class="help" aria-label="Ayuda">
+      <div class="help-btns">
+        <button class="btn soft" id="btn-hint" type="button">Pista</button>
+        <button class="btn soft" id="btn-help" type="button" disabled>Concepto</button>
+        <button class="btn soft" id="btn-sol" type="button" disabled>Solución</button>
+      </div>
+      <div class="help-out" id="help-out"></div>
+    </section>
+  </section>
+</main>
+
+<div class="kb-bar" id="kb-bar" hidden>
+  <div class="kb-status" id="kb-status"></div>
+  <div class="kb-row">
+    <div class="kb-keys" id="kb-keys"></div>
+    <button type="button" class="kb-check" id="kb-check">Comprobar</button>
+    <button type="button" class="kb-hide" id="kb-hide" aria-label="Ocultar teclado">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M7 8h1M11 8h1M15 8h1M7 11h10M9 18l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <h2 id="modal-title"></h2>
+      <button class="icon-btn" id="modal-close" type="button" aria-label="Cerrar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" hidden></div>
+
+<!-- Escenarios ocultos para comprobar el resultado sin afectar a la vista -->
+<div class="probes" aria-hidden="true">
+  <iframe id="probe-mine" sandbox="allow-same-origin" tabindex="-1" title="prueba"></iframe>
+  <iframe id="probe-goal" sandbox="allow-same-origin" tabindex="-1" title="prueba objetivo"></iframe>
+</div>
+
+<noscript><p class="noscript">CSS Quest necesita JavaScript activado para funcionar.</p></noscript>
+
+<script src="js/commands.js"></script>
+<script src="js/worlds.js"></script>
+<script src="js/levels/w01.js"></script>
+<script src="js/levels/w02.js"></script>
+<script src="js/levels/w03.js"></script>
+<script src="js/levels/w04.js"></script>
+<script src="js/levels/w05.js"></script>
+<script src="js/levels/w06.js"></script>
+<script src="js/levels/w07.js"></script>
+<script src="js/levels/w08.js"></script>
+<script src="js/levels/w09.js"></script>
+<script src="js/levels/w10.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/editor.js"></script>
+<script src="js/game.js"></script>
+<script>
+  /* Si el juego no arrancó, explica por qué en lugar de dejar la página quieta */
+  window.addEventListener('load', function () {
+    if (window.CQ && window.CQ.test) return;
+    var miss = window.__cqMissing || [];
+    var box = document.createElement('div');
+    box.className = 'boot-error';
+    box.setAttribute('role', 'alert');
+    box.innerHTML = '<h2>El juego no pudo arrancar</h2>' +
+      (miss.length
+        ? '<p>No se encontraron estos archivos:</p><ul>' + miss.map(function (m) { return '<li><code>' + m + '</code></li>'; }).join('') + '</ul>' +
+          '<p>Comprueba que en tu repositorio existen la carpeta <code>js</code> (con commands.js, worlds.js, engine.js, editor.js y game.js) y la carpeta <code>js/levels</code> (con w01.js … w10.js).</p>'
+        : '<p>Se produjo un error de JavaScript. Abre la consola del navegador (F12) para ver el detalle.</p>');
+    document.body.insertBefore(box, document.body.firstChild);
+  });
+</script>
+</body>
+</html>
