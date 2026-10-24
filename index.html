@@ -46,6 +46,22 @@
 </header>
 
 <main class="layout">
+  <nav class="studybar" aria-label="Herramientas de estudio">
+    <button class="study-btn cold" id="btn-streak" type="button" aria-label="Racha y estadísticas">
+      <span class="si" aria-hidden="true">🔥</span>
+      <span class="st"><b id="streak-n">0</b> <span id="streak-u">días</span></span>
+    </button>
+    <button class="study-btn" id="btn-review" type="button" aria-label="Repaso de errores">
+      <span class="si" aria-hidden="true">🔁</span>
+      <span class="st">Repaso</span>
+      <span class="badge" id="review-n" hidden>0</span>
+    </button>
+    <button class="study-btn" id="btn-random" type="button" aria-label="Desafío aleatorio: abrir un nivel al azar">
+      <span class="si" aria-hidden="true">🎲</span>
+      <span class="st">Al azar</span>
+    </button>
+  </nav>
+
   <section class="stage-col" aria-label="Escenario">
     <div class="stage" id="stage">
       <div class="stage-bar">
@@ -117,6 +133,12 @@
     </div>
 
     <section class="feedback" id="feedback" aria-live="polite" hidden></section>
+
+    <details class="notes" id="notes">
+      <summary>Mis notas de este nivel <span class="sub" id="note-state">vacía</span></summary>
+      <label class="sr" for="note-ta">Notas personales de este nivel</label>
+      <textarea id="note-ta" rows="4" maxlength="2000" placeholder="Apunta lo que quieras recordar: una aclaración, un truco o por qué fallaste. Se guarda sola en este dispositivo."></textarea>
+    </details>
 
     <section class="help" aria-label="Ayuda">
       <div class="help-btns">

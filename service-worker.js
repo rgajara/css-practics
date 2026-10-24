@@ -1,7 +1,7 @@
 /* CSS Quest — Service Worker para jugar sin conexión.
    Al publicar una versión nueva, cambia VERSION: el navegador detecta el
    cambio, descarga los archivos nuevos y el juego ofrece «Actualizar». */
-const VERSION = 'cssquest-v1.0.1';
+const VERSION = 'cssquest-v1.1.0';
 
 const ASSETS = [
   './',
